@@ -1,5 +1,5 @@
 class Questions:
-  questions = []
+  questions = [] # class attribute
   def __init__(self, question_id="", title="", question=""):
       self.title = title
       self.question = question
@@ -10,8 +10,8 @@ class Questions:
       "id": self.question_id,
       "title": self.title,
       "question": self.question
-
   })
+    return "Question successfully added"
 
   def get_all(self):
     return self.questions
@@ -34,14 +34,13 @@ class Answers:
       "answer_id": self.answer_id,
       "answer": self.answer
     })
-    return {"message": "answer has been posted"}
-
+    return "Answer has been posted"
+  
   def get_all_answers(self):
     return self.answers
-  
+     
   def get_one_answer(self, answer_id):
     for answer in self.answers:
       if  answer["answer_id"] == answer_id:
         return self.answer
-
 
