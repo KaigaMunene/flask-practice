@@ -1,12 +1,14 @@
 from crypt import methods
 from . import app 
-from .model import Questions
-from .model import Answers
+from .model import Questions, Answers
 from flask import request,jsonify
 import uuid
 path = "api/v1/"
 
-@app.route(f"/{path}/",)
+# have consistent route paths
+# descriptive error messages
+
+@app.route(f"/{path}/",) 
 def hello(): #root handler function
     return "Hello There, How are you ?"
 
@@ -34,4 +36,6 @@ def get_all_questions():
 def get_one_question(question_id):
     question = Questions().get_one(question_id)
     return jsonify({"question": question}), 200
+
+
 
