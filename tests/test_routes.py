@@ -2,7 +2,7 @@ import unittest
 from app import app
 import json
 
-from app.routes import generate_id
+from app.routes import generate_id, post_question
 
 
 
@@ -55,9 +55,41 @@ class TestRoute(unittest.TestCase):
         self.assertEqual(question["title"], posted_question["title"])
         self.assertEqual(question["question"], posted_question["question"])
     
+    def test_update_question(self):
+        posted_question = {"title":"python", "question":"What is python programming language?"}
+        self.post_a_question(posted_question)
+        generated_id = generate_id(posted_question["title"])
+        response = self.client.put(f"/{self.path}/question/{generated_id}", data=json.dumps(posted_question), headers=self.headers)
+        self.assertEqual(response.status_code, 200)
+        question = json.loads(response.data)
+        self.assertEqual(question["message"],"question updated successfully")
+
+    def test_for_update_question_title(self):
+        invalid_data ={"title":"","question":"What was the lesson of the day"}
+        generated_id = generate_id(invalid_data["title"])
+        response = self.client.put(f"/{self.path}/question/{generated_id}", data=json.dumps(invalid_data), headers=self.headers)
+        self.assertEqual(response.status_code, 400)
+        return_response_in_python = json.loads(response.data)
+        self.assertEqual(return_response_in_python["message"],"Invalid title enter a valid title")
+
+    def test_for_update_question_question(self):
+        invalid_data ={"title":"Tests","question":""}
+        generated_id = generate_id(invalid_data["title"])
+        response = self.client.put(f"/{self.path}/question/{generated_id}", data=json.dumps(invalid_data), headers=self.headers)
+        self.assertEqual(response.status_code, 400)
+        return_response_in_python = json.loads(response.data)
+        self.assertEqual(return_response_in_python["message"],"Invalid question, enter a valid question")
+    
+    def test_for_update_question_question_id(self):
+        invalid_data = {"question":"What is postman used for?"}
+        generated_id = generate_id(invalid_data["question"])
+        response = self.client.put(f"/{self.path}/question/{generated_id}", data=json.dumps(invalid_data), headers=self.headers)
+        self.assertEqual(response.status_code, 400)
+    
     def test_delete_question(self):
         posted_question = {"title":"Exam","question":"When are the exams?"}      
         self.post_a_question(posted_question)
         generated_id = generate_id(posted_question["title"])
         response = self.client.delete(f"{self.path}/question/{generated_id}", headers=self.headers)
         self.assertEqual(response.status_code, 204)
+    
