@@ -11,7 +11,6 @@ class TestRoute(unittest.TestCase):
         self.client = app.test_client()
         self.path = "api/v1"
         self.headers = {"Content-Type":"application/json"}
-        # self.test_data = {"title": "Name", "question":"What is your name"}
     
     def test_post_a_question(self):
         response = self.client.post(f"/{self.path}/question", data=json.dumps({"title":"Animals", "question":"Species of animals"}), headers=self.headers)
