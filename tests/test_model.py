@@ -1,40 +1,68 @@
 import unittest
 
-from app import model
 from app.model import Answers, Questions
 
 
-# test setUp method
 class TestQuestions(unittest.TestCase):
     def setUp(self):
-        self.questions = Questions(1, "class", "what is a class")
+        self.question = {
+            "question_id": 1,
+            "title": "class",
+            "question": "what is a class",
+        }
 
     def test_add_question_returns_correct(self):
-        self.assertEqual(self.questions.add(), "Question successfully added")
+        qs = Questions()
+        response = qs.add(
+            self.question["question_id"],
+            self.question["title"],
+            self.question["question"],
+        )
+        self.assertEqual(response, "Question successfully added")
 
     def test_get_all_questions_is_correct(self):
-        self.assertEqual(
-            self.questions.get_all(),
-            [{"id": 1, "title": "class", "question": "what is a class"}],
+        qs = Questions()
+        previous_count = len(qs.get_all())
+
+        qs.add(
+            2,
+            self.question["title"],
+            self.question["question"],
         )
+
+        current_count = len(qs.get_all())
+
+        self.assertEqual(current_count, previous_count + 1)
 
     def test_get_one_question(self):
-        self.assertEqual(
-            self.questions.get_one(1),
-            {"id": 1, "title": "class", "question": "what is a class"},
-        )
+        qs = Questions()
+        question = qs.get_one(self.question["question_id"])
 
-    def test_remove_a_question(self):
-        self.assertEqual(
-            self.questions.delete_question(1), "Question successfully deleted"
-        )
+        self.assertEqual(question["id"], self.question["question_id"])
+        self.assertEqual(question["title"], self.question["title"])
+        self.assertEqual(question["question"], self.question["question"])
+
+    def test_delete_a_question(self):
+        question = {
+            "question_id": 3,
+            "title": "Test",
+            "question": "This is a test question",
+        }
+        qs = Questions()
+        qs.add(question["question_id"], question["title"], question["question"])
+        previous_count = len(qs.get_all())
+
+        # delete question added
+        response = qs.delete_question(question["question_id"])
+        current_count = len(qs.get_all())
+        self.assertEqual(response, "Question successfully deleted")
+        self.assertEqual(current_count, previous_count - 1)
 
     def test_to_update_a_question(self):
         self.assertEqual(
-            Questions(title="html", question="how to right a div").update_question(1),
+            Questions().update_question(1, "html", "how to right a div"),
             "Question updated successfully",
         )
-
 
 class TestAnswers(unittest.TestCase):
     def test_add_answers(self):
@@ -43,16 +71,8 @@ class TestAnswers(unittest.TestCase):
         self.assertEqual("Answer has been posted", result)
 
     def test_get_all_answers(self):
-        self.assertEqual(
-            Answers().get_all_answers(),
-            [
-                {
-                    "question_id": 1,
-                    "answer_id": 1,
-                    "answer": "A class is a blueprint of an object",
-                }
-            ],
-        )
+        self.assertNotEqual(len(Answers().get_all_answers()), 0)
+
         self.assertIsInstance(Answers().get_all_answers(), list)
 
     def test_get_one_answer(self):

@@ -1,4 +1,5 @@
 import json
+import pdb
 import unittest
 
 from app import app
@@ -49,16 +50,23 @@ class TestQuestionRoutes(unittest.TestCase):
         )
 
     def test_get_all_questions(self):
+        # get all questions currently existing
+        res = self.client.get(f"{self.path}/question", headers=self.headers)
+        res_data = json.loads(res.data)
+        questions = res_data["question"]
+        previous_count = len(questions)
+
         # post question
         self.post_a_question({"title": "name", "question": "what is your name"})
 
+        # get all questions after adding a question
         response = self.client.get(f"{self.path}/question", headers=self.headers)
-        res_data = json.loads(response.data)
-        questions = res_data["question"]
+        response_data = json.loads(response.data)
+        questions = response_data["question"]
 
         self.assertEqual(response.status_code, 200)
         self.assertIsInstance(questions, list)
-        self.assertEqual(len(questions), 2)
+        self.assertEqual(len(questions), previous_count + 1)
 
     def test_get_one_question(self):
         posted_question = {"title": "Program", "question": "what is a program"}
@@ -179,22 +187,3 @@ class TestQuestionRoutes(unittest.TestCase):
 
         self.assertEqual(response.status_code, 404)
         self.assertEqual(res_data["message"], "Question not found")
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
