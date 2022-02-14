@@ -11,12 +11,12 @@ path = "/api/v1"
 # descriptive error messages
 
 
-def generate_id(title):
-    return hashlib.sha256(title.encode("utf-8")).hexdigest()
-
-
-def generate_answer_id(answer):
-    return hashlib.sha256(answer.encode("utf-8")).hexdigest()
+def generate_id(message):
+    """
+    function to generate a hash given a string.
+    returns a hash value of length 2x the value passed in hexdigest.
+    """
+    return hashlib.sha256(message.encode("utf-8")).hexdigest(5) 
 
 
 @app.route(
@@ -89,7 +89,7 @@ def post_answer():
     data = request.get_json()
     question_id = data.get("question_id")
     answer = data.get("answer")
-    auto_generate_answer_id = generate_answer_id(answer)
+    auto_generate_answer_id = generate_id(answer)
     if not question_id:
         return (
             jsonify({"message": "Invalid question_id, enter a valid question_id"}),
