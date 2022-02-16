@@ -38,7 +38,7 @@ def post_question():
 
     auto_generate_id = generate_id(title)
     if Questions().get_one(auto_generate_id):
-        return {"message": "The question exists, please check out the answers"}, 201
+        return {"message": "The question exists, please check out the answers"}, 303
 
     qs = Questions()
     qs.add(auto_generate_id, title, question)
@@ -139,3 +139,4 @@ def delete_an_answer(answer_id):
         return jsonify({"message": "Answer not found"}), 404
     Answers().delete_answer(answer_id)
     return jsonify({"message": "Question successfully deleted"}), 204
+
