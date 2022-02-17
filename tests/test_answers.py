@@ -3,7 +3,7 @@ import pdb
 import unittest
 
 from app import app
-from app.routes import generate_answer_id, generate_id, post_answer
+from app.routes import generate_id
 
 
 class TestAnswersRoutes(unittest.TestCase):
@@ -97,7 +97,7 @@ class TestAnswersRoutes(unittest.TestCase):
         }
         self.post_an_answer(posted_answer)
 
-        generated_answer_id = generate_answer_id(posted_answer["answer"])
+        generated_answer_id = generate_id(posted_answer["answer"])
 
         response = self.client.get(
             f"{self.path}/answer/{generated_answer_id}", headers=self.headers
@@ -186,11 +186,11 @@ class TestAnswersRoutes(unittest.TestCase):
         }
         self.post_an_answer(post_answer)
 
-        generated_answer_id = generate_answer_id(post_answer["answer"])
+        generated_answer_id = generate_id(post_answer["answer"])
 
         response = self.client.put(
             f"{self.path}/answer/{generated_answer_id}",
-            data=json.dumps(posted_question),
+            data=json.dumps(post_answer),
             headers=self.headers,
         )
         response_data = json.loads(response.data)
@@ -218,6 +218,7 @@ class TestAnswersRoutes(unittest.TestCase):
         self.assertEqual(response.status_code, 404)
         self.assertEqual(response_data["message"], "Answer not found")
 
+
     def test_delete_answer(self):
         posted_question = {
             "title": "Politics",
@@ -232,7 +233,7 @@ class TestAnswersRoutes(unittest.TestCase):
             "answer": "It's near the time for elections and tensions are arising",
         }
         self.post_an_answer(posted_answer)
-        generated_answer_id = generate_answer_id(posted_answer["answer"])
+        generated_answer_id = generate_id(posted_answer["answer"])
         response = self.client.delete(
             f"{self.path}/answer/{generated_answer_id}", headers=self.headers
         )

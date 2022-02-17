@@ -16,7 +16,7 @@ def generate_id(message):
     function to generate a hash given a string.
     returns a hash value of length 2x the value passed in hexdigest.
     """
-    return hashlib.sha256(message.encode("utf-8")).hexdigest(5) 
+    return hashlib.sha256(message.encode("utf-8")).hexdigest() 
 
 
 @app.route(
@@ -129,6 +129,8 @@ def update_answer_to_a_question(answer_id):
     answer = data.get("answer")
     if Answers().get_one_answer(answer_id) is None:
         return jsonify({"message": "Answer not found"}), 404
+    if not answer:
+        return jsonify({"message": "Invalid answer, enter a valid answer"}), 404
     answer = Answers(question_id=question_id, answer=answer).update_answer(answer_id)
     return jsonify({"message": "answer updated successfully"}), 200
 
